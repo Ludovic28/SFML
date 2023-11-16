@@ -28,10 +28,17 @@ bool Brick::intersects(Ball& otherObject, float bounceAngle) const {
         float ballTop = ballPosition.y - otherObject.getRadius();
         float ballBottom = ballPosition.y + otherObject.getRadius();
 
+        // Calcule l'angle de rebond en radians
+        float angle = bounceAngle * 3.14159265359 / 180.0;
+
         // Inverser la composante x du vecteur de déplacement en fonction du côté de la collision
         if ((ballVelocity.x < 0 && ballRight > brickLeft && ballLeft < brickRight) ||
             (ballVelocity.x > 0 && ballLeft < brickRight && ballRight > brickLeft)) {
-            ballVelocity.x = -ballVelocity.x;
+
+
+            float newVelocityX = std::cos(angle) * ballVelocity.x - std::sin(angle) * ballVelocity.y;
+
+            ballVelocity.x = newVelocityX;
 
             // Ajuster la position de la balle pour éviter la pénétration
             if (ballVelocity.x > 0) {
@@ -47,13 +54,11 @@ bool Brick::intersects(Ball& otherObject, float bounceAngle) const {
         // Inverser la composante y du vecteur de déplacement en fonction du côté de la collision
         if ((ballVelocity.y < 0 && ballBottom > brickTop && ballTop < brickBottom) ||
             (ballVelocity.y > 0 && ballTop < brickBottom && ballBottom > brickTop)) {
-            // Calcule l'angle de rebond en radians
-            float angle = bounceAngle * 3.14159265359 / 180.0;
+            
             // Calcule les nouvelles composantes de la vélocité en fonction de l'angle
-            float newVelocityX = std::cos(angle) * ballVelocity.x - std::sin(angle) * ballVelocity.y;
             float newVelocityY = std::sin(angle) * ballVelocity.x + std::cos(angle) * ballVelocity.y;
             // Applique les nouvelles composantes de la vélocité
-            ballVelocity.x = newVelocityX;
+            
             ballVelocity.y = newVelocityY;
 
             // Ajuster la position de la balle pour éviter la pénétration

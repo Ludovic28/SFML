@@ -21,7 +21,7 @@ int main()
 
     float Angle = 45.0f;
 
-    const int numBricks = 30; // Nombre de briques que vous voulez
+    const int numBricks = 12; // Nombre de briques que vous voulez
 
     // Créez un tableau de briques
     std::vector<Brick> bricks;
@@ -59,16 +59,19 @@ int main()
         cannon.update(window); // Mettre à jour l'angle du canon selon la souris
         cannon.draw(window); // Dessiner le canon
 
-        ball.update(window); // Mettre à jour la position de la balle
-        ball.draw(window); // Dessiner la balle
+        
 
         // Mettez à jour et dessinez les briques
         for (Brick& brick : bricks) {
             brick.draw(window);
 
-            std::cout << "test brique :" <<brick.intersects(ball, Angle) << std::endl;
+            brick.intersects(ball, Angle);
+
+            ball.update(window); // Mettre à jour la position de la balle
             
         }
+
+        ball.draw(window); // Dessiner la balle
 
         window.display();
     }

@@ -23,6 +23,4 @@ public:
     sf::Vector2f getVelocity() const;
     sf::Vector2f getPosition() const;
 
-
-
 };
