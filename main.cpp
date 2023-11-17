@@ -16,33 +16,15 @@ int main()
 
     Cannon cannon(static_cast<float>(window.getSize().x), static_cast<float>(window.getSize().y)); // Création d'un objet Canon
 
-    Ball ball(400, 300, 10); // Création d'une balle
+    Ball ball(300, 300, 10); // Création d'une balle
 
+    std::vector<Ball> projectiles;
+    std::vector<float> angles;
+
+    Brick brick(200,200,100,50,sf::Color::Green);
+    std::vector<Brick> bricks = brick.createBricks(window, 7, 15, 8);
 
     float Angle = 45.0f;
-
-    const int numBricks = 12; // Nombre de briques que vous voulez
-
-    // Créez un tableau de briques
-    std::vector<Brick> bricks;
-    bricks.reserve(numBricks); // Réservez de l'espace pour les briques
-
-
-    // Remplissez le tableau de briques
-    for (int i = 0; i < numBricks; i++) {
-        float x = i * 60.0f; // Ajustez la position des briques selon vos besoins
-        float y = 100.0f;
-
-        // Générez une couleur aléatoire
-        sf::Color randomColor(
-            sf::Uint8(rand() % 256), // Composante rouge aléatoire
-            sf::Uint8(rand() % 256), // Composante verte aléatoire
-            sf::Uint8(rand() % 256)  // Composante bleue aléatoire
-        );
-
-        Brick brick(x, y, randomColor); // Créez une brique
-        bricks.push_back(brick); // Ajoutez-la au tableau de briques
-    }
 
     while (window.isOpen())
     {
@@ -56,10 +38,16 @@ int main()
 
         window.clear();
 
+        if (!cannon.isBallFlying() && sf::Mouse::isButtonPressed(sf::Mouse::Left) && projectiles.empty()) {
+            // Tire une nouvelle balle
+            std::pair<Ball, float> projectile = cannon.fire();
+            projectiles.push_back(projectile.first);
+            angles.push_back(projectile.second);
+        }
+
         cannon.update(window); // Mettre à jour l'angle du canon selon la souris
         cannon.draw(window); // Dessiner le canon
 
-        
 
         // Mettez à jour et dessinez les briques
         for (Brick& brick : bricks) {
@@ -70,6 +58,7 @@ int main()
             ball.update(window); // Mettre à jour la position de la balle
             
         }
+
 
         ball.draw(window); // Dessiner la balle
 

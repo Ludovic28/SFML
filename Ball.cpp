@@ -8,16 +8,20 @@ Ball::Ball(float x, float y, float rad) : GameObject(x, y, rad * 2, rad * 2), ra
 }
 
 void Ball::update(const sf::RenderWindow& window) {
-    float speed = 0.01f; // Ajuste la vitesse pour la rendre très lente
+    float speed = 0.001f; // Ajuste la vitesse pour la rendre très lente
 
     shape.move(velocity * speed); // Déplacement de la balle
 
     if (shape.getPosition().x - radius < 0 || shape.getPosition().x + radius > window.getSize().x) {
         velocity.x = -velocity.x; // Inverser la direction horizontale
     }
-    if (shape.getPosition().y - radius < 0 || shape.getPosition().y + radius > window.getSize().y) {
+    if (shape.getPosition().y - radius < 0 || shape.getPosition().y + radius > window.getSize().y) { //Pour enlever les collisions du bas faut delete "shape.getPosition().y + radius > window.getSize().y"
         velocity.y = -velocity.y; // Inverser la direction verticale
     }
+    /*
+    if (shape.getPosition().y + radius > window.getSize().y) {
+        destroy();
+    }*/
 
     // Normaliser le vecteur de vitesse pour maintenir une vitesse constante
     float length = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
@@ -47,3 +51,16 @@ sf::Vector2f Ball::getPosition() const {
     return shape.getPosition();
 }
 
+void Ball::setDirection(const sf::Vector2f& newDirection) {
+    velocity = newDirection;
+}
+
+bool Ball::isDestroyed() const
+{
+    return ballIsDestroyed;
+}
+
+void Ball::destroy()
+{
+    ballIsDestroyed = true;
+}

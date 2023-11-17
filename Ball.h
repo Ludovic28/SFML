@@ -7,6 +7,7 @@ private:
     float radius;
     sf::CircleShape shape;
     sf::Vector2f velocity;
+    bool ballIsDestroyed;
 
 public:
     Ball(float x, float y, float rad);
@@ -23,4 +24,8 @@ public:
     sf::Vector2f getVelocity() const;
     sf::Vector2f getPosition() const;
 
+    void setDirection(const sf::Vector2f& newDirection);
+
+    bool isDestroyed() const;
+    void destroy();
 };

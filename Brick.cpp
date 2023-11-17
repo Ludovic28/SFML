@@ -1,20 +1,25 @@
 #include "Brick.h"
 
-Brick::Brick(float x, float y, sf::Color color) {
-    shape.setSize(sf::Vector2f(60, 20));
+Brick::Brick(float x, float y, float width, float height, sf::Color color) : GameObject(x, y, width, height){
+    shape.setSize(sf::Vector2f(width, height));
     shape.setPosition(x, y);
     shape.setFillColor(color);
-    isDestroyed = false;
+    isDestroyed_ = false;
 }
 
 void Brick::draw(sf::RenderWindow& window) {
-    if (!isDestroyed) {
+    if (!isDestroyed_) {
         window.draw(shape);
     }
 }
 
-bool Brick::intersects(Ball& otherObject, float bounceAngle) const {
+bool Brick::intersects(Ball& otherObject, float bounceAngle) {
     if (Collider::checkCollision(otherObject.getGlobalBounds(), shape.getGlobalBounds())) {
+
+        if (isDestroyed_) {
+            return false; // Pas de collision avec une brique détruite
+        }
+
         sf::Vector2f ballVelocity = otherObject.getVelocity();
         sf::Vector2f ballPosition = otherObject.getPosition();
 
@@ -76,15 +81,48 @@ bool Brick::intersects(Ball& otherObject, float bounceAngle) const {
         otherObject.setVelocity(ballVelocity);
         otherObject.setPosition(ballPosition.x, ballPosition.y);
 
+        destroy();
+        
         return true; // Collision détectée
     }
 
     return false; // Pas de collision
 }
 
-
-
-
 sf::FloatRect Brick::getGlobalBounds() const {
     return shape.getGlobalBounds();
+}
+
+std::vector<Brick> Brick::createBricks(sf::RenderWindow& window, int rows, int cols, float gap) {
+    std::vector<Brick> bricks;  // Créer un vecteur local pour stocker les briques
+
+    // Calculer la largeur disponible pour les briques
+    float availableWidth = window.getSize().x - (cols + 1) * gap;
+
+    // Calculer la largeur d'une brique
+    float brickWidth = availableWidth / cols;
+
+    // Définir la hauteur d'une brique (vous pouvez ajuster cela selon vos besoins)
+    float brickHeight = 100 / rows;
+
+    // Créer les briques en fonction du nombre de lignes et de colonnes
+    for (int row = 0; row < rows; ++row) {
+        for (int col = 0; col < cols; ++col) {
+            float x = gap + col * (brickWidth + gap);
+            float y = gap + row * (brickHeight + gap);
+
+            // Ajouter la brique au vecteur local
+            bricks.push_back(Brick(x, y, brickWidth, brickHeight, sf::Color::Green));
+        }
+    }
+
+    return bricks;  // Retourner le vecteur local de briques
+}
+
+bool Brick::isDestroyed() const {
+    return isDestroyed_;
+}
+
+void Brick::destroy() {
+    isDestroyed_ = true;
 }
